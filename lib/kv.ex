@@ -9,7 +9,9 @@ defmodule KV do
   def start(_type, _args) do
     children = [
       {Registry, name: KV, keys: :unique},
-      {DynamicSupervisor, name: KV.BucketSupervisor, strategy: :one_for_one}
+      {DynamicSupervisor, name: KV.BucketSupervisor, strategy: :one_for_one},
+      {Task.Supervisor, name: KV.ServerSupervisor},
+      Supervisor.child_spec({Task, fn -> KV.Server.accept(4040) end}, restart: :permanent)
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one)
