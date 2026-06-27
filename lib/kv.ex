@@ -7,6 +7,9 @@ defmodule KV do
 
   @impl true
   def start(_type, _args) do
+    for node <- Application.fetch_env!(:kv, :nodes) do
+      Node.connect(node)
+    end
     port = Application.fetch_env!(:elixir_v1, :port)
 
     children = [
@@ -33,5 +36,5 @@ defmodule KV do
     GenServer.whereis(via(name))
   end
 
-  defp via(name), do: {:via, Registry, {KV, name}}
+  defp via(name), do: {:global, name}
 end

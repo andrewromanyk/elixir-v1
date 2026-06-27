@@ -13,3 +13,10 @@ port =
   end
 
 config :elixir_v1, :port, port
+
+nodes =
+  System.get_env("NODES", "")
+  |> String.split(",", trim: true)
+  |> Enum.map(&String.to_atom/1)
+
+config :kv, :nodes, nodes
